@@ -23,8 +23,8 @@ Application Java qui expose un service web **SOAP** (Jakarta XML Web Services / 
 
 ## Prérequis
 
-- JDK 17 (ou 11 minimum, adapter le `pom.xml`)
-- Maven (intégré à IntelliJ)
+- JDK 17 
+- Maven (intégré)
 - SoapUI pour les tests
 
 ## Lancement
@@ -50,16 +50,85 @@ Application Java qui expose un service web **SOAP** (Jakarta XML Web Services / 
 
 ## Test avec SoapUI
 
+Pour tester le service, j'ai d'abord lancé `ServeurJWS`, puis j'ai créé un projet dans SoapUI :
+
 1. *File > New SOAP Project*.
 2. Dans *Initial WSDL*, saisir `http://localhost:8080/calculatrice?wsdl`.
-3. Ouvrir une opération (par exemple `somme`) puis sa *Request 1*.
-4. Remplacer les `?` par des valeurs (a = 10, b = 5) 
-5. Exécuter la requête (bouton vert) et vérifier la réponse (`return` = 15.0) :
-![Requête SoapUI](images/testadditionSOAPUI.png)
+3. SoapUI génère automatiquement une requête pour chaque opération (`somme`, `soustraction`, `multiplication`, `division`).
+4. Dans chaque requête, je remplace les `?` par mes valeurs, puis je clique sur le bouton vert pour l'exécuter.
+
+### 1. Opération somme
+
+J'ai testé la somme avec a = 10 et b = 5. Le service retourne bien 15.0.
+
+**Requête :**
+
+![Requête somme](images/testadditionSOAPUIrequest.png)
+
+**Réponse :**
+
+![Réponse somme](images/testadditionSOAPUIreponse.png)
 
 
+
+### 2. Opération soustraction
+
+J'ai testé la soustraction avec a = 10 et b = 4. Le résultat obtenu est 6.0, ce qui est correct. L'ordre des paramètres compte ici : c'est a - b.
+
+**Requête :**
+
+
+![Requête soustraction](images/testsoustractionSOAPUIrequest.png)
+
+
+
+**Réponse :**
+
+
+![Réponse soustraction](images/testsoustractionSOAPUIresponse.png)
+
+### 3. Opération multiplication
+
+J'ai testé la multiplication avec a = 6 et b = 7. Le service retourne 42.0.
+
+**Requête :**
+
+![Requête multiplication](images/testmultiplicationSOAPUIrequest.png)
+
+**Réponse :**
+
+![Réponse multiplication](images/testmultiplicationSOAPUIresponse.png)
+
+
+
+
+### 4. Opération division
+
+J'ai testé la division avec a = 20 et b = 4. Le résultat est 5.0.
+
+**Requête :**
+
+![Requête division](images/testdivisionSOAPUIrequest.png)
+
+**Réponse :**
+
+![Réponse division](images/testdivisionSOAPUIresponse.png)
+
+### 5. Division par zéro (cas d'erreur)
+
+J'ai aussi voulu tester un cas particulier : la division par zéro (a = 10 et b = 0). Dans ma méthode `division`, je vérifie si b vaut 0 et je lève une exception `IllegalArgumentException`. JAX-WS transforme automatiquement cette exception en **SOAP Fault**, et SoapUI affiche le message d'erreur « Division par zéro impossible » au lieu d'un résultat.
+
+**Requête :**
+
+![Requête division par zéro](images/testdivisionzeroSOAPUIrequest.png)
+
+**Réponse (SOAP Fault) :**
+
+![Réponse division par zéro](images/testdivisionzeroSOAPUIresponse.png)
 
 ## Correspondance classe métier / contrat WSDL
+
+En consultant le WSDL et le XSD générés, j'ai remarqué que chaque élément de ma classe Java correspond à un élément du contrat :
 
 | Java | WSDL / XSD |
 |---|---|
@@ -68,6 +137,6 @@ Application Java qui expose un service web **SOAP** (Jakarta XML Web Services / 
 | Paramètres `@WebParam` | éléments du type complexe de la requête |
 | Valeur de retour | élément `return` de la réponse |
 
-## Auteur
+## Conclusion
 
-Chama Smoudi, LSI3-GLSI, Faculté des Sciences de Sfax
+Dans ce TP, j'ai créé un service web SOAP avec Jakarta XML Web Services : configuration du projet Maven, écriture de la classe métier, ajout des annotations (`@WebService`, `@WebMethod`, `@WebParam`), publication avec `Endpoint.publish`, puis test des quatre opérations avec SoapUI. Les annotations permettent à JAX-WS de générer automatiquement le WSDL et le XSD, sans avoir à les écrire à la main.
