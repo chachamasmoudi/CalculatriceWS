@@ -29,25 +29,28 @@ Application Java qui expose un service web **SOAP** (Jakarta XML Web Services / 
 
 ## Lancement
 
-1. Cloner le projet :
+Voici les étapes que j'ai suivies pour lancer et utiliser mon service web :
+
+1. **Récupération du projet** : j'ai d'abord cloné le repository depuis GitHub avec la commande suivante :
    ```
    git clone https://github.com/chachamasmoudi/CalculatriceWS.git
    ```
-2. Ouvrir le projet dans IntelliJ et recharger Maven (*Reload Maven Project*).
-3. Exécuter la classe `serveur.ServeurJWS` (clic droit, *Run*).
-4. Le service est publié à l'adresse :
+2. **Ouverture dans IntelliJ** : j'ai ouvert le dossier du projet, puis j'ai cliqué sur *Reload Maven Project* pour que Maven télécharge les trois dépendances (`jakarta.xml.ws-api`, `jaxws-rt` et `jakarta.jws-api`).
+3. **Démarrage du serveur** : j'ai lancé la classe `ServeurJWS` du package `serveur` avec un clic droit puis *Run*. Quand le service démarre, la console affiche l'adresse de publication.
+4. **Adresse du service** : grâce à `Endpoint.publish`, mon service est accessible sur :
    ```
    http://localhost:8080/calculatrice
    ```
-5. Le contrat WSDL est disponible à :
+5. **Consultation du contrat** : pour comprendre ce que JAX-WS a généré à partir de mes annotations, j'ai ouvert le WSDL dans le navigateur :
    ```
    http://localhost:8080/calculatrice?wsdl
    ```
-   et le schéma XSD à :
+   Le WSDL contient aussi un lien vers le schéma XSD, où l'on voit la structure des données échangées (les éléments `a`, `b` et `return`) :
    ```
    http://localhost:8080/calculatrice?xsd=1
    ```
 
+**Remarque :** j'ai laissé le serveur lancé pendant tous les tests, car sinon SoapUI ne peut pas importer le WSDL. Après chaque modification du code, j'ai dû arrêter puis relancer `ServeurJWS` pour que les changements soient pris en compte.**
 ## Test avec SoapUI
 
 Pour tester le service, j'ai d'abord lancé `ServeurJWS`, puis j'ai créé un projet dans SoapUI :
